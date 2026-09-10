@@ -1,0 +1,47 @@
+services:
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-web
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
+    networks:
+      - three-tier-network
+
+  app:
+    build:
+      context: ./app
+    container_name: app
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - three-tier-network
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    networks:
+      - three-tier-network
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_DB: three_tier_db
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: AppPassword123
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - three-tier-network
+
+networks:
+  three-tier-network:
+
+volumes:
+  postgres-data:
