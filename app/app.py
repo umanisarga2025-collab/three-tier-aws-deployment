@@ -1,17 +1,16 @@
-from flask import Flask
+from flask import Flask, jsonify, render_template
 import redis
 import psycopg
 
 app = Flask(__name__)
 
-# Redis connection
 redis_client = redis.Redis(
     host="redis",
     port=6379,
     decode_responses=True
 )
 
-# PostgreSQL connection
+
 def get_db_connection():
     return psycopg.connect(
         host="postgres",
@@ -22,20 +21,55 @@ def get_db_connection():
     )
 
 
+def check_postgres():
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("SELECT 1")
+        cursor.fetchone()
+        cursor.close()
+        connection.close()
+        return True
+    except Exception:
+        return False
+
+
+def check_redis():
+    try:
+        return redis_client.ping()
+    except Exception:
+        return False
+
+
 @app.route("/")
 def home():
-    return "Hello! Three-Tier Application is Running"
+    postgres_status = check_postgres()
+    redis_status = check_redis()
+
+    return render_template(
+        "index.html",
+        postgres=postgres_status,
+        redis=redis_status
+    )
 
 
 @app.route("/health")
 def health():
-    return "Application is healthy"
+    postgres_status = check_postgres()
+    redis_status = check_redis()
+
+    healthy = postgres_status and redis_status
+
+    return jsonify({
+        "application": "healthy" if healthy else "degraded",
+        "postgresql": "connected" if postgres_status else "disconnected",
+        "redis": "connected" if redis_status else "disconnected"
+    })
 
 
 @app.route("/redis")
 def redis_test():
     redis_client.set("message", "Hello from Redis")
-
     message = redis_client.get("message")
 
     return f"Redis response: {message}"
@@ -44,7 +78,6 @@ def redis_test():
 @app.route("/users")
 def users():
     connection = get_db_connection()
-
     cursor = connection.cursor()
 
     cursor.execute(
