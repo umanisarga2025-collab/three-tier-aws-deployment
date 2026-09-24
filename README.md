@@ -1,5 +1,8 @@
 # Three-Tier AWS Application
 
+## Project Purpose
+
+This project demonstrates a three-tier application architecture using Docker and AWS services. The application separates the web, application, and data tiers for better organization and deployment.
 A Dockerized three-tier web application deployed on AWS EC2 using Amazon ECR.
 
 ## Architecture
