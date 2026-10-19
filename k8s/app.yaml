@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: app
-          image: three-tier-app:local
-          imagePullPolicy: Never
+          image: umanisarga/three-tier-app:1.0
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
           env:
