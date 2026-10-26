@@ -12,6 +12,10 @@ data:
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
       }
+      location = /gitops-test {
+        default_type text/plain;
+        return 200 "GitOps automatic sync is working!";
+      }
     }
 ---
 apiVersion: apps/v1
