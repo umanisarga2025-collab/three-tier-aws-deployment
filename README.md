@@ -81,3 +81,19 @@ ends. GitHub stores the project configuration but does not keep the cluster
 or its workloads running.
 
 This project can run without AWS. AWS deployment is not currently required.
+
+## Project Documentation
+
+- [Architecture and CI/GitOps Flow](docs/ARCHITECTURE.md)
+- [Final Assignment Demonstration](docs/DEMO.md)
+- [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
+- [Prometheus and Grafana Setup](monitoring/README.md)
+
+## Completion Status
+
+- [x] Docker Hub image publishing workflow configured.
+- [x] GitHub Actions build and push workflow verified successful.
+- [x] Kubernetes application health previously verified.
+- [x] Argo CD synchronization previously verified.
+- [x] Architecture, demonstration, and troubleshooting documentation added.
+- [ ] Prometheus and Grafana installation and dashboard verification.
