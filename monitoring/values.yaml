@@ -1,0 +1,26 @@
+grafana:
+  enabled: true
+  adminUser: admin
+  # Supply this via a Kubernetes Secret or Helm override.
+  adminPassword: CHANGE_ME_BEFORE_INSTALL
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      memory: 256Mi
+
+prometheus:
+  enabled: true
+  prometheusSpec:
+    retention: 1d
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 384Mi
+
+alertmanager:
+  enabled: false
