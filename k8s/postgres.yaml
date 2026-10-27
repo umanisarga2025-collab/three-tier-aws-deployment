@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+﻿apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
@@ -23,6 +23,7 @@ spec:
             - containerPort: 5432
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -33,6 +34,18 @@ spec:
               value: appuser
             - name: POSTGRES_PASSWORD
               value: AppPassword123
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+            - name: postgres-tmp
+              mountPath: /tmp
+      volumes:
+        - name: postgres-data
+          emptyDir: {}
+        - name: postgres-tmp
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
