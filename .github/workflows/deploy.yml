@@ -1,10 +1,17 @@
-name: Test, Build and Push Three-Tier App
+
+name: Test, Scan, Build and Push Three-Tier App
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   test:
@@ -27,10 +34,32 @@ jobs:
         working-directory: app
         run: python -m pytest -v
 
+  trivy-filesystem-scan:
+    name: Scan Dependencies and Files
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,misconfig,secret
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          ignore-unfixed: true
+
   build-and-push:
     name: Build and Push Docker Image
-    needs: test
     runs-on: ubuntu-latest
+    needs:
+      - test
+      - trivy-filesystem-scan
+    if: github.event_name != 'pull_request'
 
     steps:
       - name: Checkout code
